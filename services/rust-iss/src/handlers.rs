@@ -5,10 +5,12 @@ use axum::{
 use chrono::Utc;
 use serde_json::Value;
 use std::collections::HashMap;
+use validator::Validate;
 
 use crate::domain::Health;
 use crate::error::ApiError;
 use crate::services::{IssService, OsdrService, SpaceService};
+use crate::validators::{IssHistoryQuery, OsdrListQuery};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -51,15 +53,36 @@ pub async fn iss_trend(State(state): State<AppState>) -> Result<Json<Value>, Api
     Ok(Json(serde_json::to_value(trend).unwrap()))
 }
 
+pub async fn iss_history(
+    Query(query): Query<IssHistoryQuery>,
+    State(state): State<AppState>,
+) -> Result<Json<Value>, ApiError> {
+    // Валидация параметров
+    query.validate()
+        .map_err(|e| ApiError::Internal(format!("Validation error: {}", e)))?;
+    
+    let limit = query.get_limit_or_default();
+    let points = state.iss_service.get_history(limit).await?;
+    Ok(Json(serde_json::json!({ "points": points })))
+}
+
 // OSDR handlers
 pub async fn osdr_sync(State(state): State<AppState>) -> Result<Json<Value>, ApiError> {
     let written = state.osdr_service.sync().await?;
     Ok(Json(serde_json::json!({ "written": written })))
 }
 
-pub async fn osdr_list(State(state): State<AppState>) -> Result<Json<Value>, ApiError> {
-    let limit = state.osdr_service.list(20).await?;
-    Ok(Json(serde_json::json!({ "items": limit })))
+pub async fn osdr_list(
+    Query(query): Query<OsdrListQuery>,
+    State(state): State<AppState>,
+) -> Result<Json<Value>, ApiError> {
+    // Валидация параметров
+    query.validate()
+        .map_err(|e| ApiError::Internal(format!("Validation error: {}", e)))?;
+    
+    let limit = query.get_limit_or_default();
+    let items = state.osdr_service.list(limit).await?;
+    Ok(Json(serde_json::json!({ "items": items })))
 }
 
 // Space cache handlers

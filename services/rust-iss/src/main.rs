@@ -8,17 +8,21 @@ mod repository;
 mod scheduler;
 mod services;
 mod utils;
+mod validators;
 
 use axum::{routing::get, Router};
 use sqlx::postgres::PgPoolOptions;
 use tracing::info;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
+use tower::ServiceBuilder;
+use tower_http::{trace::TraceLayer, cors::{CorsLayer, Any}};
+use std::time::Duration;
 
 use crate::clients::NasaClient;
 use crate::config::Config;
 use crate::db::init_db;
 use crate::handlers::{
-    health, iss_last, iss_trend, iss_trigger, osdr_list, osdr_sync, space_latest, space_refresh,
+    health, iss_last, iss_trend, iss_history, iss_trigger, osdr_list, osdr_sync, space_latest, space_refresh,
     space_summary, AppState,
 };
 use crate::repository::{CacheRepository, IssRepository, OsdrRepository};
@@ -88,7 +92,12 @@ async fn main() -> anyhow::Result<()> {
         space_service,
     };
 
-    // Build router
+    // Build router with middleware
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
+
     let app = Router::new()
         // Health
         .route("/health", get(health))
@@ -96,6 +105,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/last", get(iss_last))
         .route("/fetch", get(iss_trigger))
         .route("/iss/trend", get(iss_trend))
+        .route("/iss/history", get(iss_history))
         // OSDR
         .route("/osdr/sync", get(osdr_sync))
         .route("/osdr/list", get(osdr_list))
@@ -103,7 +113,13 @@ async fn main() -> anyhow::Result<()> {
         .route("/space/:src/latest", get(space_latest))
         .route("/space/refresh", get(space_refresh))
         .route("/space/summary", get(space_summary))
-        .with_state(state);
+        .with_state(state)
+        .layer(
+            ServiceBuilder::new()
+                .layer(TraceLayer::new_for_http())
+                .layer(cors)
+                .timeout(Duration::from_secs(30))
+        );
 
     // Start server
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
