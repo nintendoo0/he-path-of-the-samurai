@@ -305,6 +305,26 @@
       color: rgba(255, 255, 255, 0.7) !important;
     }
     
+    footer a {
+      transition: all 0.3s ease;
+    }
+    
+    footer a:hover {
+      color: #00ffff !important;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      transform: translateX(5px);
+    }
+    
+    footer svg {
+      transition: all 0.3s ease;
+    }
+    
+    footer a:hover svg {
+      fill: #00ffff;
+      filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+      transform: scale(1.1);
+    }
+    
     /* Spinner */
     .spinner-border {
       border-color: rgba(255, 255, 255, 0.3);
@@ -395,10 +415,76 @@
   </div>
 </nav>
 @yield('content')
-<footer class="mt-5 py-4 bg-light border-top">
-  <div class="container text-center text-muted">
-    <p class="mb-1">🌌 Проект "Кассиопея" - Космический мониторинг в реальном времени</p>
-    <p class="mb-0 small">NASA API • JWST • ISS Tracking • OSDR</p>
+<footer class="mt-5 py-4">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Логотип и описание -->
+      <div class="col-lg-4">
+        <h5 style="background: linear-gradient(135deg, #667eea, #00ffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+          🌌 Кассиопея
+        </h5>
+        <p class="text-muted small mb-3">
+          Космический мониторинг в реальном времени. Данные NASA, OSDR, ISS Position Tracking и астрономические события.
+        </p>
+        <div class="d-flex gap-3">
+          <a href="https://github.com/nintendoo0/he-path-of-the-samurai" target="_blank" class="text-muted" style="transition: all 0.3s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+            </svg>
+          </a>
+          <a href="/design-examples" class="text-muted" style="transition: all 0.3s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-palette" viewBox="0 0 16 16">
+              <path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+              <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8m-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Навигация -->
+      <div class="col-lg-2 col-6">
+        <h6 class="text-uppercase mb-3" style="color: #00ffff; font-size: 0.875rem;">Разделы</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none">Dashboard</a></li>
+          <li class="mb-2"><a href="/iss" class="text-muted text-decoration-none">ISS Tracker</a></li>
+          <li class="mb-2"><a href="/astronomy" class="text-muted text-decoration-none">Astronomy</a></li>
+          <li class="mb-2"><a href="/osdr" class="text-muted text-decoration-none">OSDR</a></li>
+        </ul>
+      </div>
+      
+      <!-- Технологии -->
+      <div class="col-lg-3 col-6">
+        <h6 class="text-uppercase mb-3" style="color: #00ffff; font-size: 0.875rem;">Технологии</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><span class="text-muted">🦀 Rust + Axum</span></li>
+          <li class="mb-2"><span class="text-muted">🐘 PHP + Laravel</span></li>
+          <li class="mb-2"><span class="text-muted">🐍 Python</span></li>
+          <li class="mb-2"><span class="text-muted">🗄️ PostgreSQL + Redis</span></li>
+        </ul>
+      </div>
+      
+      <!-- API источники -->
+      <div class="col-lg-3">
+        <h6 class="text-uppercase mb-3" style="color: #00ffff; font-size: 0.875rem;">API Источники</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><span class="text-muted">🚀 NASA OSDR</span></li>
+          <li class="mb-2"><span class="text-muted">🛰️ ISS Position API</span></li>
+          <li class="mb-2"><span class="text-muted">🔭 JWST Data</span></li>
+          <li class="mb-2"><span class="text-muted">🌤️ Open-Meteo</span></li>
+        </ul>
+      </div>
+    </div>
+    
+    <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 2rem 0;">
+    
+    <div class="row">
+      <div class="col-12 text-center">
+        <p class="text-muted small mb-0">
+          © 2025 <span style="background: linear-gradient(135deg, #667eea, #00ffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Кассиопея</span> 
+          • Сделано с 💜 для космических энтузиастов
+        </p>
+      </div>
+    </div>
   </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
