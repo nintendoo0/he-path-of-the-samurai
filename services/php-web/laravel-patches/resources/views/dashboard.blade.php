@@ -1,17 +1,48 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+  /* Glow Icons for Metrics */
+  .metric-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    animation: glow-pulse 2s infinite;
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.8); }
+  }
+  
+  .stat-value {
+    background: linear-gradient(135deg, #667eea, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
+
 <div class="container-fluid py-4 px-4">
   <!-- Заголовок с приветствием -->
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <h1 class="mb-1" style="font-size: 2.5rem; font-weight: 700;">🌌 Космический Dashboard</h1>
+          <h1 class="mb-1" style="font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #00ffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            🌌 Космический Dashboard
+          </h1>
           <p class="text-muted mb-0">Мониторинг космических данных в реальном времени</p>
         </div>
         <div class="text-end">
-          <div class="badge bg-success bg-opacity-25 text-success px-3 py-2">
+          <div class="badge bg-success bg-opacity-25 text-success px-3 py-2" style="box-shadow: 0 0 15px rgba(25, 135, 84, 0.4);">
             <i class="bi bi-circle-fill" style="font-size: 8px;"></i> LIVE
           </div>
         </div>
@@ -19,14 +50,14 @@
     </div>
   </div>
 
-  <!-- Метрики МКС -->
+  <!-- Метрики МКС с Hybrid стилем -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+          <div class="metric-icon">⚡</div>
           <div class="small text-muted mb-2">Скорость МКС</div>
-          <div class="fs-3 fw-bold" style="color: #fca5a5;">
+          <div class="fs-3 fw-bold stat-value">
             {{ isset(($iss['payload'] ?? [])['velocity']) ? number_format($iss['payload']['velocity'],0,'',' ') : '—' }}
           </div>
           <div class="small text-muted">км/ч</div>
@@ -36,9 +67,9 @@
     <div class="col-6 col-lg-3">
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📏</div>
+          <div class="metric-icon">📏</div>
           <div class="small text-muted mb-2">Высота МКС</div>
-          <div class="fs-3 fw-bold" style="color: #fde68a;">
+          <div class="fs-3 fw-bold stat-value">
             {{ isset(($iss['payload'] ?? [])['altitude']) ? number_format($iss['payload']['altitude'],0,'',' ') : '—' }}
           </div>
           <div class="small text-muted">км</div>
@@ -48,9 +79,9 @@
     <div class="col-6 col-lg-3">
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌐</div>
+          <div class="metric-icon">🌐</div>
           <div class="small text-muted mb-2">Широта</div>
-          <div class="fs-3 fw-bold" style="color: #a5f3fc;">
+          <div class="fs-3 fw-bold stat-value">
             {{ isset(($iss['payload'] ?? [])['latitude']) ? number_format($iss['payload']['latitude'],4) : '—' }}°
           </div>
           <div class="small text-muted">Север/Юг</div>
@@ -60,9 +91,9 @@
     <div class="col-6 col-lg-3">
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🧭</div>
+          <div class="metric-icon">🧭</div>
           <div class="small text-muted mb-2">Долгота</div>
-          <div class="fs-3 fw-bold" style="color: #86efac;">
+          <div class="fs-3 fw-bold stat-value">
             {{ isset(($iss['payload'] ?? [])['longitude']) ? number_format($iss['payload']['longitude'],4) : '—' }}°
           </div>
           <div class="small text-muted">Восток/Запад</div>

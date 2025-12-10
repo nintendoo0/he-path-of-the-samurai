@@ -7,62 +7,95 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    /* Glass-morphism Theme */
+    /* Hybrid Theme E - Комбинированный стиль */
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       min-height: 100vh;
       background-attachment: fixed;
+      color: #fff;
     }
     
     #map {
       height: 340px;
       border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    /* Navbar Glass Effect */
+    /* Navbar Hybrid Style */
     .navbar-brand {
       font-weight: bold;
       font-size: 1.5rem;
+      background: linear-gradient(135deg, #667eea, #00ffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .bg-space {
-      background: rgba(255, 255, 255, 0.15) !important;
-      backdrop-filter: blur(30px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05) !important;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
     .navbar-dark .navbar-nav .nav-link {
-      color: rgba(255, 255, 255, 0.9) !important;
+      color: rgba(255, 255, 255, 0.85) !important;
       transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 0 4px;
     }
     
     .navbar-dark .navbar-nav .nav-link:hover,
     .navbar-dark .navbar-nav .nav-link.active {
-      color: #fff !important;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
+      color: #00ffff !important;
+      background: rgba(102, 126, 234, 0.2);
       backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
     }
     
-    /* Glass Cards */
+    /* Hybrid Cards with Glow Effects */
     .card {
-      background: rgba(255, 255, 255, 0.1) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(15px);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
       transition: all 0.3s ease;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .card:hover::before {
+      left: 100%;
     }
     
     .card:hover {
-      background: rgba(255, 255, 255, 0.15) !important;
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.08) !important;
+      transform: translateY(-5px);
+      border-color: rgba(102, 126, 234, 0.5);
+      box-shadow: 
+        0 12px 40px rgba(102, 126, 234, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
     
     .card-header {
-      background: rgba(255, 255, 255, 0.1) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
       backdrop-filter: blur(10px);
+      border-radius: 20px 20px 0 0 !important;
     }
     
     .card-body {
@@ -70,58 +103,69 @@
     }
     
     .card-title {
-      color: #fff !important;
+      color: #00ffff !important;
       font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
     }
     
-    /* Buttons */
+    /* Gradient Buttons with Glow */
     .btn-primary {
-      background: rgba(255, 255, 255, 0.2) !important;
-      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      background: linear-gradient(135deg, #667eea, #764ba2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       color: #fff !important;
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     
     .btn-primary:hover {
-      background: rgba(255, 255, 255, 0.3) !important;
+      background: linear-gradient(135deg, #764ba2, #667eea) !important;
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
     }
     
     .btn-outline-primary,
     .btn-outline-secondary {
-      background: rgba(255, 255, 255, 0.1) !important;
-      border: 1px solid rgba(255, 255, 255, 0.3) !important;
-      color: #fff !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(102, 126, 234, 0.4) !important;
+      color: #00ffff !important;
       backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
     }
     
     .btn-outline-primary:hover,
+    .btn-outline-secondary:hover {
+      background: rgba(102, 126, 234, 0.2) !important;
+      border-color: rgba(102, 126, 234, 0.6) !important;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px);
+    }
     .btn-outline-secondary:hover {
       background: rgba(255, 255, 255, 0.2) !important;
       border-color: rgba(255, 255, 255, 0.4) !important;
     }
     
-    /* Form Controls */
+    /* Form Controls with Hybrid Style */
     .form-control,
     .form-select {
-      background: rgba(255, 255, 255, 0.15) !important;
-      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       color: #fff !important;
       backdrop-filter: blur(10px);
+      border-radius: 10px;
+      transition: all 0.3s ease;
     }
     
     .form-control::placeholder {
-      color: rgba(255, 255, 255, 0.6) !important;
+      color: rgba(255, 255, 255, 0.5) !important;
     }
     
     .form-control:focus,
     .form-select:focus {
-      background: rgba(255, 255, 255, 0.2) !important;
-      border-color: rgba(255, 255, 255, 0.5) !important;
+      background: rgba(255, 255, 255, 0.12) !important;
+      border-color: rgba(102, 126, 234, 0.5) !important;
       color: #fff !important;
-      box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
     }
     
     .form-label {
@@ -129,66 +173,86 @@
       font-weight: 500;
     }
     
-    /* Tables */
+    /* Tables with Glow */
     .table {
       color: #fff !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
     }
     
     .table thead {
-      background: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(102, 126, 234, 0.2) !important;
       backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+    }
+    
+    .table thead th {
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      color: #00ffff !important;
     }
     
     .table-hover tbody tr:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(102, 126, 234, 0.15) !important;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
     }
     
     .table-striped tbody tr:nth-of-type(odd) {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.03) !important;
     }
     
-    /* Badges */
+    .table td, .table th {
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Badges with Gradient */
     .badge {
-      background: rgba(255, 255, 255, 0.2) !important;
+      background: linear-gradient(135deg, #667eea, #764ba2) !important;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+      padding: 0.5em 0.8em;
     }
     
-    /* Alerts */
+    /* Alerts with Hybrid Style */
     .alert {
-      background: rgba(255, 255, 255, 0.15) !important;
-      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       color: #fff !important;
       backdrop-filter: blur(20px);
+      border-radius: 15px;
     }
     
     .alert-info {
-      background: rgba(13, 202, 240, 0.2) !important;
+      background: rgba(13, 202, 240, 0.15) !important;
       border-color: rgba(13, 202, 240, 0.4) !important;
+      box-shadow: 0 0 15px rgba(13, 202, 240, 0.2);
     }
     
     .alert-success {
-      background: rgba(25, 135, 84, 0.2) !important;
+      background: rgba(25, 135, 84, 0.15) !important;
       border-color: rgba(25, 135, 84, 0.4) !important;
+      box-shadow: 0 0 15px rgba(25, 135, 84, 0.2);
     }
     
     .alert-warning {
-      background: rgba(255, 193, 7, 0.2) !important;
+      background: rgba(255, 193, 7, 0.15) !important;
       border-color: rgba(255, 193, 7, 0.4) !important;
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.2);
     }
     
     .alert-danger {
-      background: rgba(220, 53, 69, 0.2) !important;
+      background: rgba(220, 53, 69, 0.15) !important;
       border-color: rgba(220, 53, 69, 0.4) !important;
+      box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
     }
     
-    /* Text colors */
+    /* Text colors with Glow */
     .text-muted {
-      color: rgba(255, 255, 255, 0.7) !important;
+      color: rgba(255, 255, 255, 0.65) !important;
     }
     
     .text-primary {
-      color: #e0e7ff !important;
+      color: #00ffff !important;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
     }
     
     .text-success {
@@ -228,12 +292,13 @@
       border-color: rgba(13, 202, 240, 0.5) !important;
     }
     
-    /* Footer */
+    /* Footer Hybrid Style */
     footer {
-      background: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
       backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-      color: rgba(255, 255, 255, 0.9) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: rgba(255, 255, 255, 0.85) !important;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
     }
     
     footer .text-muted {
@@ -246,22 +311,35 @@
       border-right-color: #fff;
     }
     
-    /* Custom scrollbar */
+    /* Custom scrollbar with Glow */
     ::-webkit-scrollbar {
-      width: 10px;
+      width: 12px;
     }
     
     ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(26, 26, 46, 0.5);
+      border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 5px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
+      background: linear-gradient(135deg, #764ba2, #667eea);
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.7);
+    }
+    
+    /* Glow Icon Animation */
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.8); }
+    }
+    
+    .glow-icon {
+      animation: glow-pulse 2s infinite;
     }
   </style>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
