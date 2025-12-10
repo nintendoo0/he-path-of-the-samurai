@@ -17,6 +17,11 @@ class ProxyController extends Controller
         return $this->pipe('/iss/trend' . ($q ? '?' . $q : ''));
     }
 
+    public function history() {
+        $q = request()->getQueryString();
+        return $this->pipe('/iss/history' . ($q ? '?' . $q : ''));
+    }
+
     private function pipe(string $path)
     {
         $url = $this->base() . $path;
