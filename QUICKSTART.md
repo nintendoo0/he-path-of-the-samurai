@@ -41,6 +41,22 @@ docker-compose ps
 - 📊 **OSDR Data**: http://localhost:8080/osdr
 - ⚡ **Rust API**: http://localhost:8081/health
 
+### ⚠️ Настройка Astronomy API (опционально)
+
+Для работы блока "Астрономические события" нужна регистрация на https://astronomyapi.com
+
+Подробная инструкция: [API_SETUP.md](API_SETUP.md)
+
+**Кратко:**
+1. Зарегистрируйтесь на https://astronomyapi.com (бесплатно)
+2. Получите Application ID и Secret
+3. Обновите `.env`:
+   ```env
+   ASTRO_APP_ID=ваш_app_id
+   ASTRO_APP_SECRET=ваш_secret
+   ```
+4. Перезапустите: `docker-compose restart php nginx`
+
 ## Проверка работоспособности
 
 ### 1. Проверка Rust API

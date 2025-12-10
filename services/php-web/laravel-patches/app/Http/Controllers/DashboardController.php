@@ -19,11 +19,22 @@ class DashboardController extends Controller
     public function index()
     {
         $iss = $this->rustApi->getIssLast();
+        $trend = $this->rustApi->getIssTrend();
+        
+        // Загружаем JWST галерею для главной страницы
+        $jwstGallery = $this->jwstService->fetchGallery([
+            'source' => 'jpg',
+            'suffix' => '',
+            'program' => '',
+            'instrument' => '',
+            'page' => 1,
+            'perPage' => 6,
+        ]);
 
         return view('dashboard', [
             'iss' => $iss,
-            'trend' => [],
-            'jw_gallery' => [],
+            'trend' => $trend,
+            'jw_gallery' => $jwstGallery['items'] ?? [],
             'jw_observation_raw' => [],
             'jw_observation_summary' => [],
             'jw_observation_images' => [],
