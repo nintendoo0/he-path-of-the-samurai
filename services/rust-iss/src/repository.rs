@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde_json::Value;
 use sqlx::{PgPool, Row};
 
-use crate::domain::{IssPosition, IssTrend, OsdrItem, SpaceData};
+use crate::domain::{IssPosition, IssTrend, IssHistoryPoint, OsdrItem, SpaceData};
 use crate::error::ApiError;
 use crate::utils::{haversine_km, num};
 
@@ -99,6 +99,38 @@ impl IssRepository {
             to_lat: lat2,
             to_lon: lon2,
         })
+    }
+
+    pub async fn get_history(&self, limit: i64) -> Result<Vec<IssHistoryPoint>, ApiError> {
+        let rows = sqlx::query(
+            "SELECT fetched_at, payload FROM iss_fetch_log ORDER BY id DESC LIMIT $1",
+        )
+        .bind(limit)
+        .fetch_all(&self.pool)
+        .await?;
+
+        let mut points = Vec::new();
+        for row in rows {
+            let at: DateTime<Utc> = row.get("fetched_at");
+            let payload: Value = row.get("payload");
+            
+            let lat = num(&payload["latitude"]).unwrap_or(0.0);
+            let lon = num(&payload["longitude"]).unwrap_or(0.0);
+            let altitude = num(&payload["altitude"]).unwrap_or(0.0);
+            let velocity = num(&payload["velocity"]).unwrap_or(0.0);
+            
+            points.push(IssHistoryPoint {
+                at,
+                lat,
+                lon,
+                altitude,
+                velocity,
+            });
+        }
+        
+        // Разворачиваем, чтобы старые точки были первыми
+        points.reverse();
+        Ok(points)
     }
 }
 

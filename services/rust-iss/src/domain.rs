@@ -25,6 +25,15 @@ pub struct IssTrend {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IssHistoryPoint {
+    pub at: DateTime<Utc>,
+    pub lat: f64,
+    pub lon: f64,
+    pub altitude: f64,
+    pub velocity: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OsdrItem {
     pub id: i64,
     pub dataset_id: Option<String>,

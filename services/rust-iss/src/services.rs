@@ -2,7 +2,7 @@ use serde_json::Value;
 use tracing::info;
 
 use crate::clients::{IssClient, NasaClient, SpaceXClient};
-use crate::domain::{IssPosition, IssTrend, OsdrItem, SpaceData};
+use crate::domain::{IssPosition, IssTrend, IssHistoryPoint, OsdrItem, SpaceData};
 use crate::error::ApiError;
 use crate::repository::{CacheRepository, IssRepository, OsdrRepository};
 use crate::utils::{string_pick, time_pick};
@@ -37,6 +37,10 @@ impl IssService {
 
     pub async fn get_trend(&self) -> Result<IssTrend, ApiError> {
         self.repository.get_trend().await
+    }
+
+    pub async fn get_history(&self, limit: i64) -> Result<Vec<IssHistoryPoint>, ApiError> {
+        self.repository.get_history(limit).await
     }
 }
 
