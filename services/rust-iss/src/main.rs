@@ -12,9 +12,11 @@ mod validators;
 
 use axum::{routing::get, Router};
 use sqlx::postgres::PgPoolOptions;
+use std::time::Duration;
 use tracing::info;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 use tower::ServiceBuilder;
+use tower::limit::ConcurrencyLimitLayer;
 use tower_http::{trace::TraceLayer, cors::{CorsLayer, Any}};
 
 use crate::clients::NasaClient;
@@ -117,6 +119,8 @@ async fn main() -> anyhow::Result<()> {
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
                 .layer(cors)
+                // Concurrency limiting: maximum 100 concurrent requests
+                .layer(ConcurrencyLimitLayer::new(100))
         );
 
     // Start server
