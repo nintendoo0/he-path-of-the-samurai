@@ -59,7 +59,7 @@ pub async fn iss_history(
 ) -> Result<Json<Value>, ApiError> {
     // Валидация параметров
     query.validate()
-        .map_err(|e| ApiError::Internal(format!("Validation error: {}", e)))?;
+        .map_err(|e| ApiError::ValidationError(format!("Validation error: {}", e)))?;
     
     let limit = query.get_limit_or_default();
     let points = state.iss_service.get_history(limit).await?;
@@ -78,7 +78,7 @@ pub async fn osdr_list(
 ) -> Result<Json<Value>, ApiError> {
     // Валидация параметров
     query.validate()
-        .map_err(|e| ApiError::Internal(format!("Validation error: {}", e)))?;
+        .map_err(|e| ApiError::ValidationError(format!("Validation error: {}", e)))?;
     
     let limit = query.get_limit_or_default();
     let items = state.osdr_service.list(limit).await?;

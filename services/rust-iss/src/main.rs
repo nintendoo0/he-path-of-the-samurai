@@ -16,7 +16,6 @@ use tracing::info;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 use tower::ServiceBuilder;
 use tower_http::{trace::TraceLayer, cors::{CorsLayer, Any}};
-use std::time::Duration;
 
 use crate::clients::NasaClient;
 use crate::config::Config;
@@ -118,7 +117,6 @@ async fn main() -> anyhow::Result<()> {
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
                 .layer(cors)
-                .timeout(Duration::from_secs(30))
         );
 
     // Start server
