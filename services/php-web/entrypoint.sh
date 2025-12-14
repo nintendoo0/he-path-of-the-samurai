@@ -19,6 +19,15 @@ if [ -d "$PATCH_DIR" ]; then
   rsync -a "$PATCH_DIR/" "$APP_DIR/"
 fi
 
+# Live reload setup
+LIVE_DIR="/opt/laravel-live"
+if [ -d "$LIVE_DIR/resources" ]; then
+  echo "[php] setting up live reload for views"
+  # Создаём symlink для live reload views
+  rm -rf "$APP_DIR/resources/views"
+  ln -sf "$LIVE_DIR/resources/views" "$APP_DIR/resources/views"
+fi
+
 chown -R www-data:www-data "$APP_DIR"
 chmod -R 775 "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" || true
 

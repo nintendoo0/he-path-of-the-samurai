@@ -3,7 +3,7 @@ program LegacyCSV;
 {$mode objfpc}{$H+}
 
 uses
-  SysUtils, DateUtils, Process;
+  SysUtils, DateUtils, Unix;
 
 function GetEnvDef(const name, def: string): string;
 var v: string;
@@ -17,42 +17,78 @@ begin
   Result := minV + Random * (maxV - minV);
 end;
 
+function RandInt(minV, maxV: Integer): Integer;
+begin
+  Result := minV + Random(maxV - minV + 1);
+end;
+
+function BoolToStr(val: Boolean): string;
+begin
+  if val then Exit('TRUE') else Exit('FALSE');
+end;
+
+function EscapeCSV(const s: string): string;
+begin
+  if Pos(',', s) > 0 then
+    Exit('"' + StringReplace(s, '"', '""', [rfReplaceAll]) + '"')
+  else
+    Exit(s);
+end;
+
 procedure GenerateAndCopy();
 var
-  outDir, fn, fullpath, pghost, pgport, pguser, pgpass, pgdb, copyCmd: string;
+  outDir, fn, fullpath: string;
   f: TextFile;
   ts: string;
+  i: Integer;
+  recordTime: TDateTime;
+  voltage, temp: Double;
+  sensor_active: Boolean;
+  cycle_count: Integer;
+  status_msg: string;
+const
+  StatusMessages: array[0..4] of string = (
+    'Normal operation',
+    'Low voltage warning',
+    'Temperature spike detected',
+    'Sensor calibration needed',
+    'All systems nominal'
+  );
 begin
   outDir := GetEnvDef('CSV_OUT_DIR', '/data/csv');
   ts := FormatDateTime('yyyymmdd_hhnnss', Now);
   fn := 'telemetry_' + ts + '.csv';
   fullpath := IncludeTrailingPathDelimiter(outDir) + fn;
 
-  // write CSV
+  // write CSV with proper types
   AssignFile(f, fullpath);
   Rewrite(f);
-  Writeln(f, 'recorded_at,voltage,temp,source_file');
-  Writeln(f, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ',' +
-             FormatFloat('0.00', RandFloat(3.2, 12.6)) + ',' +
-             FormatFloat('0.00', RandFloat(-50.0, 80.0)) + ',' +
-             fn);
+  // Header with typed columns
+  Writeln(f, 'recorded_at,voltage,temp,sensor_active,cycle_count,status_msg,source_file');
+  
+  // Generate 10-15 records with varied data
+  for i := 1 to RandInt(10, 15) do
+  begin
+    recordTime := IncSecond(Now, -RandInt(0, 3600)); // Last hour
+    voltage := RandFloat(3.2, 12.6);
+    temp := RandFloat(-50.0, 80.0);
+    sensor_active := Random(10) > 2; // 80% TRUE
+    cycle_count := RandInt(100, 10000);
+    status_msg := StatusMessages[Random(5)];
+    
+    Writeln(f, 
+      FormatDateTime('yyyy-mm-dd"T"hh:nn:ss', recordTime) + ',' +  // ISO8601 timestamp
+      FormatFloat('0.00', voltage) + ',' +                          // Numeric
+      FormatFloat('0.00', temp) + ',' +                             // Numeric
+      BoolToStr(sensor_active) + ',' +                              // Boolean
+      IntToStr(cycle_count) + ',' +                                 // Integer
+      EscapeCSV(status_msg) + ',' +                                 // String
+      EscapeCSV(fn)                                                 // String
+    );
+  end;
   CloseFile(f);
-
-  // COPY into Postgres
-  pghost := GetEnvDef('PGHOST', 'db');
-  pgport := GetEnvDef('PGPORT', '5432');
-  pguser := GetEnvDef('PGUSER', 'monouser');
-  pgpass := GetEnvDef('PGPASSWORD', 'monopass');
-  pgdb   := GetEnvDef('PGDATABASE', 'monolith');
-
-  // Use psql with COPY FROM PROGRAM for simplicity
-  // Here we call psql reading from file
-  copyCmd := 'psql "host=' + pghost + ' port=' + pgport + ' user=' + pguser + ' dbname=' + pgdb + '" ' +
-             '-c "\copy telemetry_legacy(recorded_at, voltage, temp, source_file) FROM ''' + fullpath + ''' WITH (FORMAT csv, HEADER true)"';
-  // Mask password via env
-  SetEnvironmentVariable('PGPASSWORD', pgpass);
-  // Execute
-  fpSystem(copyCmd);
+  
+  WriteLn('[Pascal] CSV generated at: ', fullpath, ' with ', i, ' records');
 end;
 
 var period: Integer;

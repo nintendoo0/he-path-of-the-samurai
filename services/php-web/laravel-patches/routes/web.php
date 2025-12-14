@@ -8,6 +8,7 @@ use App\Http\Controllers\ProxyController;
 use App\Http\Controllers\AstroController;
 use App\Http\Controllers\AstronomyController;
 use App\Http\Controllers\CmsController;
+use App\Http\Controllers\TelemetryController;
 
 Route::get('/', fn() => redirect('/dashboard'));
 
@@ -16,6 +17,11 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/iss', [IssController::class, 'index']);
 Route::get('/osdr', [OsdrController::class, 'index']);
 Route::get('/astronomy', [AstronomyController::class, 'index']);
+
+// Telemetry (Pascal Legacy CSV)
+Route::get('/telemetry', [TelemetryController::class, 'index'])->name('telemetry');
+Route::get('/telemetry/api', [TelemetryController::class, 'api'])->name('telemetry.api');
+Route::get('/telemetry/export', [TelemetryController::class, 'export'])->name('telemetry.export');
 
 // Страница с примерами дизайна
 Route::view('/design-examples', 'design-examples');
