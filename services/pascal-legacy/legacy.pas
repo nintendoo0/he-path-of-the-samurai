@@ -94,7 +94,7 @@ end;
 var period: Integer;
 begin
   Randomize;
-  period := StrToIntDef(GetEnvDef('GEN_PERIOD_SEC', '300'), 300);
+  period := StrToIntDef(GetEnvDef('GEN_PERIOD_SEC', '60'), 300);
   while True do
   begin
     try

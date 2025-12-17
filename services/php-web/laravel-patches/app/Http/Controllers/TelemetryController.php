@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class TelemetryController extends Controller
 {
@@ -26,9 +23,8 @@ class TelemetryController extends Controller
             'timestamp' => $data['timestamp'] ?? null,
         ]);
     }
-    
-    /**
-     * Export CSV to XLSX with proper formatting
+      /**
+     * Export CSV to XLSX - simplified CSV export
      */
     public function export(Request $request)
     {
@@ -38,79 +34,33 @@ class TelemetryController extends Controller
             return response()->json(['error' => 'No data to export'], 404);
         }
         
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Telemetry Data');
+        // Generate CSV file for download
+        $filename = 'telemetry_export_' . date('Ymd_His') . '.csv';
         
-        // Headers
-        $headers = $data['headers'];
-        $col = 'A';
-        foreach ($headers as $header) {
-            $sheet->setCellValue($col . '1', $header);
-            $sheet->getStyle($col . '1')->getFont()->setBold(true);
-            $col++;
-        }
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'max-age=0',
+        ];
         
-        // Data rows with type formatting
-        $row = 2;
-        foreach ($data['rows'] as $dataRow) {
-            $col = 'A';
-            foreach ($headers as $idx => $header) {
-                $value = $dataRow[$idx] ?? '';
-                $cellCoord = $col . $row;
-                
-                // Type-specific formatting
-                if ($header === 'recorded_at') {
-                    // Timestamp ISO8601 → Excel DateTime
-                    $sheet->setCellValue($cellCoord, $value);
-                    $sheet->getStyle($cellCoord)
-                          ->getNumberFormat()
-                          ->setFormatCode('yyyy-mm-dd hh:mm:ss');
-                } elseif ($header === 'sensor_active') {
-                    // Boolean as TRUE/FALSE
-                    $sheet->setCellValue($cellCoord, $value === 'TRUE' ? 'TRUE' : 'FALSE');
-                } elseif (in_array($header, ['voltage', 'temp'])) {
-                    // Float numbers with 2 decimals
-                    $sheet->setCellValue($cellCoord, (float)$value);
-                    $sheet->getStyle($cellCoord)
-                          ->getNumberFormat()
-                          ->setFormatCode('0.00');
-                } elseif ($header === 'cycle_count') {
-                    // Integer
-                    $sheet->setCellValue($cellCoord, (int)$value);
-                    $sheet->getStyle($cellCoord)
-                          ->getNumberFormat()
-                          ->setFormatCode('0');
-                } else {
-                    // String
-                    $sheet->setCellValue($cellCoord, $value);
-                }
-                
-                $col++;
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Write headers
+            fputcsv($file, $data['headers']);
+            
+            // Write data rows
+            foreach ($data['rows'] as $row) {
+                fputcsv($file, $row);
             }
-            $row++;
-        }
+            
+            fclose($file);
+        };
         
-        // Auto-size columns
-        foreach (range('A', $col) as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
-        }
-        
-        // Generate file
-        $filename = 'telemetry_export_' . date('Ymd_His') . '.xlsx';
-        $writer = new Xlsx($spreadsheet);
-        
-        // Stream to browser
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-        
-        $writer->save('php://output');
-        exit;
+        return response()->stream($callback, 200, $headers);
     }
-    
-    /**
-     * Parse the latest CSV file from /data/csv
+      /**
+     * Parse the main CSV file from /data/csv
      */
     private function parseLatestCSV(): array
     {
@@ -120,17 +70,14 @@ class TelemetryController extends Controller
             return ['rows' => [], 'headers' => [], 'filename' => 'CSV directory not found'];
         }
         
-        $files = glob($csvPath . '/telemetry_*.csv');
+        // Use main CSV file instead of looking for multiple files
+        $mainFile = $csvPath . '/telemetry_main.csv';
         
-        if (empty($files)) {
-            return ['rows' => [], 'headers' => [], 'filename' => 'No CSV files found'];
+        if (!file_exists($mainFile)) {
+            return ['rows' => [], 'headers' => [], 'filename' => 'telemetry_main.csv not found'];
         }
         
-        // Get latest file by modification time
-        usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
-        $latestFile = $files[0];
-        
-        $handle = fopen($latestFile, 'r');
+        $handle = fopen($mainFile, 'r');
         if (!$handle) {
             return ['rows' => [], 'headers' => [], 'filename' => 'Cannot open CSV'];
         }
@@ -148,8 +95,8 @@ class TelemetryController extends Controller
         return [
             'rows' => $rows,
             'headers' => $headers,
-            'filename' => basename($latestFile),
-            'timestamp' => filemtime($latestFile),
+            'filename' => basename($mainFile),
+            'timestamp' => filemtime($mainFile),
         ];
     }
     

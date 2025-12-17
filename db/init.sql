@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS telemetry_legacy (
     recorded_at TIMESTAMPTZ NOT NULL,
     voltage NUMERIC(6,2) NOT NULL,
     temp NUMERIC(6,2) NOT NULL,
+    sensor_active BOOLEAN DEFAULT TRUE,
+    cycle_count INTEGER DEFAULT 0,
     source_file TEXT NOT NULL
 );
 
