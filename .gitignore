@@ -1,0 +1,92 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+tmp.env.add
+
+# Docker volumes data
+pgdata/
+appdata/
+csvdata/
+redis_data/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# PHP / Laravel
+vendor/
+node_modules/
+storage/*.key
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Composer
+composer.phar
+composer.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# Pascal
+*.o
+*.ppu
+*.compiled
+lib/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# CSV data files (optional - uncomment if you don't want to track CSV files)
+# *.csv
+# services/php-web/laravel-patches/public/data/csv/*.csv
+
+# Sensitive data
+*.key
+*.pem
+*.crt
+*.p12
+*.jks
