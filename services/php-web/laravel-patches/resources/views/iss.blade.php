@@ -54,13 +54,27 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Тренд движения -->
+    </div>    <!-- Тренд движения -->
     <div class="col-lg-4">
       <div class="card shadow-sm h-100">
         <div class="card-body">
           <h5 class="card-title mb-3">📊 Тренд движения</h5>
+          @if(isset($total_trend_count) && $total_trend_count > 0)
+            <div class="alert alert-info py-2 mb-3">
+              <small>
+                📊 Показано <strong>{{ $displayed_trend_count }}</strong> из <strong>{{ $total_trend_count }}</strong> записей
+                @if($displayed_trend_count < $total_trend_count)
+                  <br>
+                  <div class="btn-group btn-group-sm mt-2" role="group">
+                    <a href="?max=50" class="btn btn-outline-primary btn-sm {{ request('max', 50) == 50 ? 'active' : '' }}">50</a>
+                    <a href="?max=100" class="btn btn-outline-primary btn-sm {{ request('max') == 100 ? 'active' : '' }}">100</a>
+                    <a href="?max=500" class="btn btn-outline-primary btn-sm {{ request('max') == 500 ? 'active' : '' }}">500</a>
+                    <a href="?max=1000" class="btn btn-outline-primary btn-sm {{ request('max') == 1000 ? 'active' : '' }}">Все</a>
+                  </div>
+                @endif
+              </small>
+            </div>
+          @endif
           @if(!empty($trend))
             <div class="mb-3">
               <div class="d-flex justify-content-between align-items-center mb-2">

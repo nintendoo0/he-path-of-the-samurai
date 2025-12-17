@@ -162,8 +162,33 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
       });
   }
-  
-  function displayResults(data, lat, lon, days) {
+    function displayResults(data, lat, lon, days) {
+    // Проверка на ошибку валидации
+    if (data && data.error && data.message) {
+      results.innerHTML = `
+        <div class="card shadow-sm border-danger">
+          <div class="card-body text-center py-5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-geo-alt-fill text-danger mb-3" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+            </svg>
+            <h4 class="text-danger">⚠️ Некорректные координаты</h4>
+            <p class="text-muted mb-3">
+              <strong>Широта:</strong> ${lat.toFixed(4)}°, <strong>Долгота:</strong> ${lon.toFixed(4)}°
+            </p>
+            <div class="alert alert-warning mb-3">
+              <strong>Причина:</strong> ${data.message}
+            </div>
+            <p class="small text-muted mb-0">
+              💡 <strong>Совет:</strong> Используйте кнопку "Моё" для автоопределения координат или введите координаты крупного города.<br>
+              Примеры: Москва (55.7558, 37.6176), Санкт-Петербург (59.9343, 30.3351), Лондон (51.5074, -0.1278)
+            </p>
+          </div>
+        </div>
+      `;
+      document.getElementById('astroChartContainer').style.display = 'none';
+      return;
+    }
+    
     // Проверяем наличие данных в таблице
     const hasData = data && data.table && data.table.rows && data.table.rows.length > 0;
     

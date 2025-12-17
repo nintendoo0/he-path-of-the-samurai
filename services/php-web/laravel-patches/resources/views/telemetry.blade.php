@@ -148,17 +148,30 @@
       </div>
     </div>
   </div>
-  
-  <!-- CSV Info Card -->
+    <!-- CSV Info Card -->
   <div class="csv-info-card">
-    <div class="d-flex align-items-center">
-      <div class="csv-info-icon">📄</div>
-      <div>
-        <h5 class="mb-1" style="color: #00ffff;">{{ $filename }}</h5>
-        <p class="mb-0 text-muted">
-          Последнее обновление: {{ $timestamp ? date('d.m.Y H:i:s', $timestamp) : 'N/A' }} 
-          • Записей: {{ count($telemetry) }}
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="csv-info-icon">📄</div>
+        <div>
+          <h5 class="mb-1" style="color: #00ffff;">{{ $filename }}</h5>
+          <p class="mb-0 text-muted">
+            Последнее обновление: {{ $timestamp ? date('d.m.Y H:i:s', $timestamp) : 'N/A' }}
+          </p>
+        </div>
+      </div>
+      <div class="text-end">
+        <p class="mb-1 text-muted small">
+          Показано <strong style="color: #00ffff;">{{ $displayed_count }}</strong> из <strong>{{ $total_count }}</strong> записей
         </p>
+        @if($displayed_count < $total_count)
+          <div class="btn-group btn-group-sm" role="group">
+            <a href="?max=100" class="btn btn-outline-light btn-sm {{ request('max', 100) == 100 ? 'active' : '' }}">100</a>
+            <a href="?max=500" class="btn btn-outline-light btn-sm {{ request('max') == 500 ? 'active' : '' }}">500</a>
+            <a href="?max=1000" class="btn btn-outline-light btn-sm {{ request('max') == 1000 ? 'active' : '' }}">1000</a>
+            <a href="?max=10000" class="btn btn-outline-light btn-sm {{ request('max') == 10000 ? 'active' : '' }}">Все</a>
+          </div>
+        @endif
       </div>
     </div>
   </div>

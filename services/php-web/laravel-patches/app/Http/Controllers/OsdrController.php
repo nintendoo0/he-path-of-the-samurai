@@ -12,26 +12,31 @@ class OsdrController extends Controller
     public function __construct(RustApiService $rustApi)
     {
         $this->rustApi = $rustApi;
-    }
-
-    public function index(Request $request)
+    }    public function index(Request $request)
     {
         $limit = max(1, min(100, (int) $request->query('limit', 20)));
+        $maxDisplay = max(1, min(500, (int) $request->query('max', 20))); // Лимит на отображение
         
         $data = $this->rustApi->getOsdrList($limit);
         $items = $data['items'] ?? [];
 
         $items = $this->flattenOsdr($items);
+        
+        // Ограничиваем количество отображаемых записей
+        $totalCount = count($items);
+        $items = array_slice($items, 0, $maxDisplay);
 
         return view('osdr', [
             'items' => $items,
-            'src' => "Rust API /osdr/list (limit={$limit})",
+            'total_count' => $totalCount,
+            'displayed_count' => count($items),
+            'src' => "Rust API /osdr/list (limit={$limit}, showing {$maxDisplay} of {$totalCount})",
         ]);
-    }
-
-    private function flattenOsdr(array $items): array
+    }private function flattenOsdr(array $items): array
     {
         $out = [];
+        $uniqueId = 1;
+        
         foreach ($items as $row) {
             $raw = $row['raw'] ?? [];
             if (is_array($raw) && $this->looksOsdrDict($raw)) {
@@ -43,7 +48,8 @@ class OsdrController extends Controller
                         $title = basename(rtrim($rest, '/'));
                     }
                     $out[] = [
-                        'id' => $row['id'],
+                        'id' => $uniqueId++,  // Уникальный ID для каждой записи
+                        'parent_id' => $row['id'],  // ID родительской записи из БД
                         'dataset_id' => $k,
                         'title' => $title,
                         'status' => $row['status'] ?? null,
@@ -55,6 +61,7 @@ class OsdrController extends Controller
                 }
             } else {
                 $row['rest_url'] = is_array($raw) ? ($raw['REST_URL'] ?? $raw['rest_url'] ?? null) : null;
+                $row['parent_id'] = null;
                 $out[] = $row;
             }
         }

@@ -8,19 +8,27 @@ use Illuminate\Support\Facades\Storage;
 class TelemetryController extends Controller
 {
     private const CSV_PATH = '/data/csv';
-    
-    /**
+      /**
      * Display telemetry CSV data with DataTables
      */
     public function index(Request $request)
     {
         $data = $this->parseLatestCSV();
         
+        // Get max display limit from query parameter (default: 100, max: 10000)
+        $maxDisplay = max(1, min(10000, (int) $request->query('max', 100)));
+        $totalRows = count($data['rows'] ?? []);
+        
+        // Limit displayed rows
+        $displayedRows = array_slice($data['rows'] ?? [], 0, $maxDisplay);
+        
         return view('telemetry', [
-            'telemetry' => $data['rows'] ?? [],
+            'telemetry' => $displayedRows,
             'headers' => $data['headers'] ?? [],
             'filename' => $data['filename'] ?? 'No CSV files found',
             'timestamp' => $data['timestamp'] ?? null,
+            'total_count' => $totalRows,
+            'displayed_count' => count($displayedRows),
         ]);
     }
       /**
